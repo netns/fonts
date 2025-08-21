@@ -2,12 +2,12 @@
 # Licensed under the MIT License.
 # See LICENSE file in the project root for details.
 
-from pathlib import Path
+import os
 import shutil
 import subprocess
-import os
 import sys
-from getopt import getopt, GetoptError
+from getopt import GetoptError, getopt
+from pathlib import Path
 
 RED = "\033[0;31m"
 GREEN = "\033[0;32m"
@@ -20,25 +20,23 @@ FONTS_SRC = Path("./fonts")
 
 FONTS_EXT = {".ttf", ".woff2", ".woff"}
 
-def show_help(code=0):
-    usage = f"""
-    Usage:
-        python3 install.py [options]
 
-    Options:
-        -l, --local         Install fonts locally (default: {LOCAL_DEST})
-        -g, --global:       Install fonts globally (requires sudo, default: {GLOBAL_DEST})
-        -f <path>, --font=<path> 
-                            Provide the source directory containing font files 
-                            (default: {FONTS_SRC.resolve()})
-        -h, --help          Show this help message and exit
+USAGE = """
+Usage:
+    python3 install.py [options]
 
-    Examples:
-        python3 install.py --local
-        sudo python3 install.py --global --font=/path/to/fonts
-    """
-    print(usage)
-    sys.exit(code)
+Options:
+    -l, --local         Install fonts locally (default: {LOCAL_DEST})
+    -g, --global:       Install fonts globally (requires sudo, default: {GLOBAL_DEST})
+    -f <path>, --font=<path> 
+                        Provide the source directory containing font files 
+                        (default: {FONTS_SRC.resolve()})
+    -h, --help          Show this help message and exit
+
+Examples:
+    python3 install.py --local
+    sudo python3 install.py --global --font=/path/to/fonts
+"""
 
 
 def log(msg, color=NC, prefix="[*]"):
@@ -107,11 +105,13 @@ def cli(argv=None):
         opts, _ = getopt(argv, "hf:gl", ["help", "font=", "global", "local"])
     except GetoptError as err:
         print(err)
-        show_help(2)
+        print(USAGE)
+        sys.exit(2)
 
     for opt, val in opts:  # type: ignore
         if opt in ("-h", "--help"):
-            show_help()
+            print(USAGE)
+            sys.exit(0)
         elif opt in ("-f", "--font"):
             args["font_src"] = Path(val)
         elif opt in ("-g", "--global"):
