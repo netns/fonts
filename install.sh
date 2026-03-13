@@ -60,7 +60,7 @@ load_fonts() {
 
 run()
 {
-    if [ ! -d "./fonts" ]; then
+    if [ -d "./fonts" ]; then
         log "Using local fonts directory"
         fonts_dir="./fonts"
     else
